@@ -1,0 +1,147 @@
+import 'package:flutter/material.dart';
+
+import 'package:nari_suraksha/core/routes/app_routes.dart';
+import 'package:nari_suraksha/features/splash/screens/splash_page.dart';
+import 'package:nari_suraksha/features/onboarding/screens/onboarding_screen.dart';
+import 'package:nari_suraksha/features/auth/screens/login_page.dart';
+import 'package:nari_suraksha/features/auth/screens/register_page.dart';
+import 'package:nari_suraksha/features/home/screens/home_page.dart';
+import 'package:nari_suraksha/features/profile/screens/profile_page.dart';
+import 'package:nari_suraksha/features/settings/screens/settings_page.dart';
+
+/// Centralised routing authority for Nari Suraksha.
+///
+/// ## Architecture
+/// The app uses Flutter's built-in [Navigator] with a single
+/// [onGenerateRoute] factory — no third-party dependency required.
+/// Route path constants live in [AppRoutes] so there are no magic
+/// strings at call sites.
+///
+/// ## Usage
+/// ```dart
+/// MaterialApp(
+///   initialRoute: AppRoutes.splash,
+///   onGenerateRoute: AppRouter.onGenerateRoute,
+///   onUnknownRoute: AppRouter.onUnknownRoute,
+/// )
+/// ```
+///
+/// ## Adding new routes
+/// 1. Add a constant to [AppRoutes].
+/// 2. Add a `case` block inside [onGenerateRoute].
+/// 3. Create / import the target screen widget.
+///
+/// ## Transitions
+/// All routes use [MaterialPageRoute] by default (platform-adaptive
+/// slide on iOS, fade on Android).  Override [_buildRoute] locally
+/// per-route to apply custom transitions where needed.
+abstract final class AppRouter {
+  AppRouter._(); // non-instantiable
+
+  // ── Public API ───────────────────────────────────────────────────────────────
+
+  /// Route factory – wire into [MaterialApp.onGenerateRoute].
+  static Route<dynamic> onGenerateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      // ── Auth / launch flow ──────────────────────────────────────────────────
+      case AppRoutes.splash:
+        return _build(settings, const SplashPage());
+
+      case AppRoutes.onboarding:
+        return _build(settings, const OnboardingScreen());
+
+      case AppRoutes.login:
+        return _build(settings, const LoginPage());
+
+      case AppRoutes.register:
+        return _build(settings, const RegisterPage());
+
+      // ── Main app ────────────────────────────────────────────────────────────
+      case AppRoutes.home:
+        return _build(settings, const HomePage());
+
+      case AppRoutes.profile:
+        return _build(settings, const ProfilePage());
+
+      case AppRoutes.settings:
+        return _build(settings, const SettingsPage());
+
+      // ── Unknown ─────────────────────────────────────────────────────────────
+      default:
+        return onUnknownRoute(settings);
+    }
+  }
+
+  /// Fallback route – wire into [MaterialApp.onUnknownRoute].
+  ///
+  /// Shows a friendly 404 page so the app never hard-crashes on an
+  /// unrecognised path.
+  static Route<dynamic> onUnknownRoute(RouteSettings settings) {
+    return MaterialPageRoute<void>(
+      settings: settings,
+      builder: (_) => _NotFoundPage(routeName: settings.name ?? '(unknown)'),
+    );
+  }
+
+  // ── Private helpers ──────────────────────────────────────────────────────────
+
+  /// Wraps [child] in a [MaterialPageRoute] with the given [settings].
+  static MaterialPageRoute<void> _build(
+    RouteSettings settings,
+    Widget child,
+  ) {
+    return MaterialPageRoute<void>(
+      settings: settings,
+      builder: (_) => child,
+    );
+  }
+}
+
+// ── 404 page ─────────────────────────────────────────────────────────────────
+
+/// Shown when an unrecognised route name is pushed.
+class _NotFoundPage extends StatelessWidget {
+  const _NotFoundPage({required this.routeName});
+
+  final String routeName;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Scaffold(
+      appBar: AppBar(title: const Text('Page not found')),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.search_off_rounded, size: 72, color: Colors.grey),
+              const SizedBox(height: 24),
+              Text(
+                '404',
+                style: theme.textTheme.displayMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Route "$routeName" does not exist.',
+                style: theme.textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+              FilledButton.icon(
+                onPressed: () => Navigator.of(context)
+                    .pushNamedAndRemoveUntil(AppRoutes.home, (_) => false),
+                icon: const Icon(Icons.home_rounded),
+                label: const Text('Go Home'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

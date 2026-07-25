@@ -3,7 +3,7 @@ import 'package:nari_suraksha/app.dart';
 
 void main() {
   testWidgets('App renders Nari Suraksha title', (WidgetTester tester) async {
-    await tester.pumpWidget(const NariSurakshaApp());
+    await tester.pumpWidget(const NarisurakshaApp());
     expect(find.text('Nari Suraksha'), findsOneWidget);
   });
 }

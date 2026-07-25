@@ -10,11 +10,37 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  google_fonts: ^8.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.3
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/icons/
+
+# ── flutter_launcher_icons configuration ──────────────────────────────────────
+flutter_launcher_icons:
+  # Android adaptive icon
+  android: true
+  ios: false                        # iOS not targeted for now
+
+  # Source icon (1024×1024 PNG)
+  image_path: "assets/icons/app_icon.png"
+
+  # Adaptive icon layers (Android 8+)
+  adaptive_icon_background: "#FFFFFF"   # pure white background layer
+  adaptive_icon_foreground: "assets/icons/app_icon.png"
+
+  # Web (not used but safe to include)
+  web:
+    generate: false
+
+  # Remove alpha channel for legacy Android (avoids Play Store warnings)
+  remove_alpha_ios: false
+  background_color_ios: "#FFFFFF"
