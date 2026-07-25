@@ -190,12 +190,7 @@ flutter run
 
 🔄 Deployment
 
----
-
-# 👨‍💻 Contributors
-
-- Adhi Nair
-- Hrushikesh Bhoir
+--
 
 ---
 
